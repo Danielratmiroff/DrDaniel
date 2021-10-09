@@ -1,24 +1,45 @@
-import { FC } from "react";
-import logo from "../../logo.svg";
+import { FC, useEffect, useState } from "react";
+import { useStyles } from "./GridStyles";
+import Node from "../Node";
+import { indexes } from "../../temporary.json";
 
 const Grid: FC = () => {
-  const grid = [];
-  for (let row = 0; row < 5; row++) {
-    const currentRow = [];
-    for (let col = 0; col < 5; col++) {
-      currentRow.push("a");
-    }
-    grid.push(currentRow);
-  }
+  const styles = useStyles();
+
+  const [med, setMed] = useState("a1");
+
+  useEffect(() => {
+    const pillTimer = setInterval(() => {
+      setMed((prev) => {
+        // sum one to current col number
+        return `${prev[0]}${parseInt(prev.slice(1)) + 1}`;
+      });
+    }, 1000);
+    return () => clearInterval(pillTimer);
+  }, []);
+
+  const buildGrid = ((): string[][] => {
+    const grid: string[][] = [];
+    indexes.forEach((row) => {
+      const currentRow: string[] = [];
+      indexes.forEach((_, idx) => {
+        const nodeId = `${row}${idx}`;
+        currentRow.push(nodeId);
+      });
+      grid.push(currentRow);
+    });
+
+    return grid;
+  })();
 
   return (
-    <div className="App">
-      {grid.map((row, rowId) => {
+    <div className={styles.container}>
+      {buildGrid.map((row) => {
         return (
-          <div key={rowId}>
-            {row.map((node, nodeId) => {
-              return <p>a</p>;
-            })}
+          <div className={styles.row}>
+            {row.map((nodeId) => (
+              <Node isFree={nodeId === med} id={nodeId} />
+            ))}
           </div>
         );
       })}
