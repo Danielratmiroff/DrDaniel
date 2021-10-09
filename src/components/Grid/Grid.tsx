@@ -6,15 +6,36 @@ import { indexes } from "../../temporary.json";
 const Grid: FC = () => {
   const styles = useStyles();
 
-  const [med, setMed] = useState("a1");
+  const [med, setMed] = useState<string>(`${indexes[indexes.length / 2]}0`);
+  const [med2, setMed2] = useState<string>(
+    `${indexes[indexes.length / 2 - 1]}0`
+  );
+
+  const getRow = (node: string): number => {
+    return parseInt(node.slice(1));
+  };
+
+  const getCol = (node: string): string => {
+    return node[0];
+  };
+
+  const getNextRow = (node: string): number => {
+    return getRow(node) + 1;
+  };
 
   useEffect(() => {
     const pillTimer = setInterval(() => {
       setMed((prev) => {
-        // sum one to current col number
-        return `${prev[0]}${parseInt(prev.slice(1)) + 1}`;
+        return getNextRow(prev) < indexes.length
+          ? `${getCol(prev)}${getNextRow(prev)}`
+          : prev;
       });
-    }, 1000);
+      setMed2((prev) => {
+        return getNextRow(prev) < indexes.length
+          ? `${getCol(prev)}${getNextRow(prev)}`
+          : prev;
+      });
+    }, 100);
     return () => clearInterval(pillTimer);
   }, []);
 
@@ -38,7 +59,7 @@ const Grid: FC = () => {
         return (
           <div className={styles.row}>
             {row.map((nodeId) => (
-              <Node isFree={nodeId === med} id={nodeId} />
+              <Node isFree={nodeId === med || nodeId === med2} id={nodeId} />
             ))}
           </div>
         );
