@@ -1,22 +1,27 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import logo from "../../logo.svg";
 
 const Grid: FC = () => {
+  const grid = [];
+  for (let row = 0; row < 5; row++) {
+    const currentRow = [];
+    for (let col = 0; col < 5; col++) {
+      currentRow.push("a");
+    }
+    grid.push(currentRow);
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer">
-          Learn React
-        </a>
-      </header>
+      {grid.map((row, rowId) => {
+        return (
+          <div key={rowId}>
+            {row.map((node, nodeId) => {
+              return <p>a</p>;
+            })}
+          </div>
+        );
+      })}
     </div>
   );
 };
