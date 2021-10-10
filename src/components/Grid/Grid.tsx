@@ -1,15 +1,26 @@
-import { FC, useEffect, useState } from "react";
+import {
+  FC,
+  useEffect,
+  KeyboardEvent,
+  useState,
+  createRef,
+  useRef,
+} from "react";
 import { useStyles } from "./GridStyles";
 import Node from "../Node";
 import { indexes } from "../../temporary.json";
 
-const Grid: FC = () => {
+type GridProps = {
+  moveTo: boolean | undefined;
+};
+
+const Grid: FC<GridProps> = ({ moveTo }) => {
   const styles = useStyles();
 
-  const [med, setMed] = useState<string>(`${indexes[indexes.length / 2]}0`);
-  const [med2, setMed2] = useState<string>(
+  const [med, setMed2] = useState<string>(
     `${indexes[indexes.length / 2 - 1]}0`
   );
+  const [med2, setMed] = useState<string>(`${indexes[indexes.length / 2]}0`);
 
   const getRow = (node: string): number => {
     return parseInt(node.slice(1));
@@ -21,6 +32,26 @@ const Grid: FC = () => {
 
   const getNextRow = (node: string): number => {
     return getRow(node) + 1;
+  };
+
+  const getNextCol = (node: string): string => {
+    const colIndex = indexes.indexOf(getCol(node));
+    return `${indexes[colIndex + 1]}${getRow(node)}`;
+  };
+
+  const getPrevCol = (node: string): string => {
+    const colIndex = indexes.indexOf(getCol(node));
+    return `${indexes[colIndex - 1]}${getRow(node)}`;
+  };
+
+  const handleKeyPress = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "a") {
+      setMed((prev) => getNextCol(prev));
+      setMed2((prev) => getNextCol(prev));
+    } else if (event.key === "d") {
+      setMed((prev) => getPrevCol(prev));
+      setMed2((prev) => getPrevCol(prev));
+    }
   };
 
   useEffect(() => {
@@ -35,7 +66,7 @@ const Grid: FC = () => {
           ? `${getCol(prev)}${getNextRow(prev)}`
           : prev;
       });
-    }, 100);
+    }, 1000);
     return () => clearInterval(pillTimer);
   }, []);
 
@@ -53,8 +84,19 @@ const Grid: FC = () => {
     return grid;
   })();
 
+  const gridContainer = createRef<HTMLDivElement>();
+
+  useEffect(() => {
+    gridContainer.current?.focus();
+  }, []);
+
   return (
-    <div className={styles.container}>
+    <div
+      ref={gridContainer}
+      tabIndex={0}
+      onKeyPress={(event) => handleKeyPress(event)}
+      className={styles.container}
+    >
       {buildGrid.map((row) => {
         return (
           <div className={styles.row}>
