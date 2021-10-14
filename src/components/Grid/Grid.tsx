@@ -1,14 +1,10 @@
-import {
-  FC,
-  useEffect,
-  KeyboardEvent,
-  useState,
-  createRef,
-  useRef,
-} from "react";
+import { FC, useEffect, KeyboardEvent, useState, createRef } from "react";
 import { useStyles } from "./GridStyles";
 import Node from "../Node";
 import { indexes } from "../../temporary.json";
+import { useKeyPress } from "../../hooks/useKeyPress";
+import { getNextCol, getPrevCol, getNextRow } from "../../utils/NodePosition";
+import { usePillDrop } from "../../hooks/PillDrop";
 
 type GridProps = {
   moveTo: boolean | undefined;
@@ -17,58 +13,21 @@ type GridProps = {
 const Grid: FC<GridProps> = ({ moveTo }) => {
   const styles = useStyles();
 
-  const [med, setMed2] = useState<string>(
-    `${indexes[indexes.length / 2 - 1]}0`
-  );
-  const [med2, setMed] = useState<string>(`${indexes[indexes.length / 2]}0`);
+  const { setMed, med, setMed2, med2 } = usePillDrop();
 
-  const getRow = (node: string): number => {
-    return parseInt(node.slice(1));
+  const moveNextCol = () => {
+    setMed((prev) => getNextCol(prev));
+    setMed2((prev) => getNextCol(prev));
   };
 
-  const getCol = (node: string): string => {
-    return node[0];
+  const movePrevCol = () => {
+    setMed((prev) => getPrevCol(prev));
+    setMed2((prev) => getPrevCol(prev));
   };
 
-  const getNextRow = (node: string): number => {
-    return getRow(node) + 1;
-  };
-
-  const getNextCol = (node: string): string => {
-    const colIndex = indexes.indexOf(getCol(node));
-    return `${indexes[colIndex + 1]}${getRow(node)}`;
-  };
-
-  const getPrevCol = (node: string): string => {
-    const colIndex = indexes.indexOf(getCol(node));
-    return `${indexes[colIndex - 1]}${getRow(node)}`;
-  };
-
-  const handleKeyPress = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "a") {
-      setMed((prev) => getNextCol(prev));
-      setMed2((prev) => getNextCol(prev));
-    } else if (event.key === "d") {
-      setMed((prev) => getPrevCol(prev));
-      setMed2((prev) => getPrevCol(prev));
-    }
-  };
-
-  useEffect(() => {
-    const pillTimer = setInterval(() => {
-      setMed((prev) => {
-        return getNextRow(prev) < indexes.length
-          ? `${getCol(prev)}${getNextRow(prev)}`
-          : prev;
-      });
-      setMed2((prev) => {
-        return getNextRow(prev) < indexes.length
-          ? `${getCol(prev)}${getNextRow(prev)}`
-          : prev;
-      });
-    }, 1000);
-    return () => clearInterval(pillTimer);
-  }, []);
+  // Listen to key presses
+  useKeyPress({ targetKey: "a", handler: movePrevCol });
+  useKeyPress({ targetKey: "d", handler: moveNextCol });
 
   const buildGrid = ((): string[][] => {
     const grid: string[][] = [];
@@ -86,17 +45,8 @@ const Grid: FC<GridProps> = ({ moveTo }) => {
 
   const gridContainer = createRef<HTMLDivElement>();
 
-  useEffect(() => {
-    gridContainer.current?.focus();
-  }, []);
-
   return (
-    <div
-      ref={gridContainer}
-      tabIndex={0}
-      onKeyPress={(event) => handleKeyPress(event)}
-      className={styles.container}
-    >
+    <div ref={gridContainer} className={styles.container}>
       {buildGrid.map((row) => {
         return (
           <div className={styles.row}>
