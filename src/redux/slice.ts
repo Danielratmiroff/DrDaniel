@@ -1,12 +1,12 @@
 // src/slice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { increment, decrement, incrementByAmount } from './caseReducers';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { increment, decrement, incrementByAmount } from "./caseReducers";
 
 const initialState = {
   value: 0,
 };
 
-export const name = 'counter';
+export const name = "counter";
 
 export const slice = createSlice({
   name,

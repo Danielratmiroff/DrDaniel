@@ -1,35 +1,18 @@
-import { FC, useEffect, KeyboardEvent, useState, createRef } from "react";
+import React, { createRef, FC, forwardRef, useMemo, useState } from "react";
 import { useStyles } from "./GridStyles";
 import Node from "../Node";
 import { indexes } from "../../temporary.json";
-import { useKeyPress } from "../../hooks/useKeyPress";
-import { getNextCol, getPrevCol, getNextRow } from "../../utils/NodePosition";
-import { usePillDrop } from "../../hooks/PillDrop";
+import { useControls } from "../../hooks/controls";
+import { usePillDrop } from "../../hooks/pillDrop";
 
-type GridProps = {
-  moveTo: boolean | undefined;
-};
-
-const Grid: FC<GridProps> = ({ moveTo }) => {
+// type GridProps = {
+//   gridRef: any;
+// };
+//
+const Grid: FC = () => {
   const styles = useStyles();
 
-  const { setMed, med, setMed2, med2 } = usePillDrop();
-
-  const moveNextCol = () => {
-    setMed((prev) => getNextCol(prev));
-    setMed2((prev) => getNextCol(prev));
-  };
-
-  const movePrevCol = () => {
-    setMed((prev) => getPrevCol(prev));
-    setMed2((prev) => getPrevCol(prev));
-  };
-
-  // Listen to key presses
-  useKeyPress({ targetKey: "a", handler: movePrevCol });
-  useKeyPress({ targetKey: "d", handler: moveNextCol });
-
-  const buildGrid = ((): string[][] => {
+  const buildGrid = useMemo(() => {
     const grid: string[][] = [];
     indexes.forEach((row) => {
       const currentRow: string[] = [];
@@ -41,17 +24,26 @@ const Grid: FC<GridProps> = ({ moveTo }) => {
     });
 
     return grid;
-  })();
+    // TODO: we re-render the whole board for now, cna be improved
+  }, [pill]);
 
-  const gridContainer = createRef<HTMLDivElement>();
+  // TODO: what is this god
+  const [pill, setPill] = useState(`${indexes[indexes.length / 2 - 1]}0`);
+
+  // usePillDrop(setPill);
+  // const pillLocation = useControls();
+  console.log(pill);
+  // console.log(1, pillLocation);
 
   return (
-    <div ref={gridContainer} className={styles.container}>
+    <div className={styles.container}>
       {buildGrid.map((row) => {
         return (
           <div className={styles.row}>
             {row.map((nodeId) => (
-              <Node isFree={nodeId === med || nodeId === med2} id={nodeId} />
+              <>
+                <Node key={nodeId} id={nodeId} />
+              </>
             ))}
           </div>
         );
