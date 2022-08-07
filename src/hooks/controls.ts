@@ -1,8 +1,7 @@
 import { getNextCol, getPrevCol } from "../utils/NodePosition";
-import { usePillDrop } from "./pillDrop";
 import { useKeyPress } from "./useKeyPress";
 
-export const useControls = ({ setPill, pill }: any) => {
+export const useControls = (setPill) => {
   const moveNextCol = () => {
     setPill((prev) => getNextCol(prev));
     // setMed2((prev) => getNextCol(prev));
@@ -16,6 +15,4 @@ export const useControls = ({ setPill, pill }: any) => {
   // Listen to key presses
   useKeyPress("h", movePrevCol);
   useKeyPress("l", moveNextCol);
-
-  return pill;
 };
