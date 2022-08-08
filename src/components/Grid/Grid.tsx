@@ -11,8 +11,13 @@ import { useStyles } from "./GridStyles";
 import Node from "../Node";
 import { indexes } from "../../temporary.json";
 import { useControls } from "../../hooks/controls";
-import { usePillDrop } from "../../hooks/pillDrop";
-import { getNextRow, isNextRowValid } from "../../utils/NodePosition";
+import {
+  getPillLocationAsString,
+  isNextRowValid,
+  movePillNextRow,
+  peekNextCol,
+} from "../../utils/NodePosition";
+import { Pill } from "../../types/types";
 
 // type GridProps = {
 //   gridRef: any;
@@ -21,8 +26,10 @@ import { getNextRow, isNextRowValid } from "../../utils/NodePosition";
 const Grid: FC = () => {
   const styles = useStyles();
 
-  // TODO: what is this god
-  const [pill, setPill] = useState(`${indexes[indexes.length / 2 - 1]}0`);
+  const [pill, setPill] = useState<Pill>({
+    col: indexes[indexes.length / 2 - 1], // align in the center column
+    row: 0,
+  });
 
   // const setPill = () => {
   //   _setPill();
@@ -46,10 +53,8 @@ const Grid: FC = () => {
   const moveToNextRow = () => {
     setPill((prev) => {
       if (isNextRowValid(prev)) {
-        console.log("1");
-        return getNextRow(prev);
+        return movePillNextRow(prev);
       } else {
-        console.log("2");
         return prev;
       }
     });
@@ -65,7 +70,7 @@ const Grid: FC = () => {
   }, []);
 
   // TODO: prob can move this to parent component
-  useControls(setPill);
+  useControls({ setPill });
 
   return (
     <div className={styles.container}>
@@ -73,7 +78,11 @@ const Grid: FC = () => {
         return (
           <div className={styles.row}>
             {row.map((nodeId) => (
-              <Node key={nodeId} isFree={pill === nodeId} id={nodeId} />
+              <Node
+                key={nodeId}
+                isFree={getPillLocationAsString(pill) === nodeId}
+                id={nodeId}
+              />
             ))}
           </div>
         );

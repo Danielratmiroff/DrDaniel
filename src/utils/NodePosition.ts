@@ -1,31 +1,80 @@
 import { indexes } from "../temporary.json";
+import { Pill } from "../types/types";
 
-export const getRow = (node: string): number => {
-  return parseInt(node.substring[1]);
+// Move helpers
+export const peekNextRow = (pill: Pill): number => {
+  return pill.row + 1;
 };
 
-export const getCol = (node: string) => {
-  return node[0];
+export const peekNextCol = (pill: Pill): string => {
+  const colIndex = indexes.indexOf(pill.col);
+  return indexes[colIndex + 1];
 };
 
-export const getNextRow = (pill: string) => {
-  //TODO: contienue here -- row is not correct
-  console.log(getRow(pill));
-  return `${getCol(pill)}${getRow(pill) + 1}`;
+export const peekPrevCol = (pill: Pill): string => {
+  const colIndex = indexes.indexOf(pill.col);
+  return indexes[colIndex - 1];
 };
 
-export const getNextCol = (node: string) => {
-  const colIndex = indexes.indexOf(getCol(node));
-  return `${indexes[colIndex + 1]}${getRow(node)}`;
+export const getPillLocationAsString = (pill: Pill): string => {
+  return `${pill.col}${pill.row}`;
 };
 
-export const getPrevCol = (node: string) => {
-  const colIndex = indexes.indexOf(getCol(node));
-  return `${indexes[colIndex - 1]}${getRow(node)}`;
+// Move the pill
+export const movePillNextRow = (pill: Pill): Pill => {
+  return {
+    col: pill.col,
+    row: peekNextRow(pill),
+  };
 };
 
-// All checks required for next row
-export const isNextRowValid = (pill: string) => {
-  const currRow = getNextRow(pill)[1];
-  return parseInt(currRow) < indexes.length;
+export const movePillPrevCol = (pill: Pill): Pill => {
+  return {
+    col: peekPrevCol(pill),
+    row: pill.row,
+  };
+};
+
+export const movePillNextCol = (pill: Pill): Pill => {
+  return {
+    col: peekNextCol(pill),
+    row: pill.row,
+  };
+};
+
+// Valid movements
+export const isPrevColValid = (pill: Pill): boolean => {
+  let isValid = true;
+  // TODO: prob refactor this to no duplicate between prev-next movements
+
+  if (!isNextRowValid(pill)) {
+    isValid = false;
+  }
+
+  if (pill.col === "a") {
+    isValid = false;
+  }
+
+  return isValid;
+};
+
+export const isNextColValid = (pill: Pill): boolean => {
+  let isValid = true;
+
+  if (!isNextRowValid(pill)) {
+    isValid = false;
+  }
+  if (pill.col === "t") {
+    isValid = false;
+  }
+
+  return isValid;
+};
+
+export const isNextRowValid = (pill: Pill): boolean => {
+  let isValid = true;
+  if (peekNextRow(pill) >= indexes.length) {
+    isValid = false;
+  }
+  return isValid;
 };
