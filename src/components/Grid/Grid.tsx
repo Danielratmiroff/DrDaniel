@@ -20,12 +20,7 @@ const Grid: FC = () => {
   const styles = useStyles();
   const [context, setContext] = useContext(Context);
 
-  const { virusLocation: virusesOrPills } = context;
-
-  const [pill, setPill] = useState<Pill>({
-    col: indexes[indexes.length / 2 - 1], // align in the center column
-    row: 0,
-  });
+  const { virusLocation: virusesOrPills, pillLocation } = context;
 
   const buildGrid = useMemo(() => {
     const grid: string[][] = [];
@@ -42,13 +37,23 @@ const Grid: FC = () => {
     // TODO: we re-render the whole board for now, cna be improved
   }, []);
 
-  // TODO: continue here -- need to start a new pill when the pill hits the fan
   const moveToNextRow = () => {
     setPill((prev) => {
       if (isNextRowValid({ pill: prev, virusesOrPills })) {
         return movePillNextRow(prev);
       } else {
-        return prev;
+        setContext({
+          ...context,
+          pillLocation: [...pillLocation, getPillLocationAsString(prev)],
+        });
+        console.log({
+          ...context,
+          pillLocation: [...pillLocation, getPillLocationAsString(prev)],
+        });
+        return {
+          col: indexes[indexes.length / 2 - 1], // align in the center column
+          row: 0,
+        };
       }
     });
   };
@@ -77,9 +82,9 @@ const Grid: FC = () => {
 
   return (
     <div className={styles.container}>
-      {buildGrid.map((row) => {
+      {buildGrid.map((row, idx) => {
         return (
-          <div className={styles.row}>
+          <div key={idx} className={styles.row}>
             {row.map((nodeId) => (
               <RenderNode key={nodeId} nodeId={nodeId} />
             ))}

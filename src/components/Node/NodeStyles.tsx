@@ -10,10 +10,10 @@ export const useStyles = makeStyles((theme: Theme) => ({
     display: "inline-block",
   },
   free: {
-    background: "black",
+    background: "grey",
   },
   taken: {
-    background: "grey",
+    background: "black",
   },
   virus: {
     background: "red",
