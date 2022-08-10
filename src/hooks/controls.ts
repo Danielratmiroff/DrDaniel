@@ -1,8 +1,10 @@
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
+import { Context } from "../App";
 import { Pill } from "../types/types";
 import {
   isNextColValid,
   isPrevColValid,
+  MoveCheck,
   movePillNextCol,
   movePillPrevCol,
 } from "../utils/NodePosition";
@@ -13,14 +15,19 @@ type ControlsProps = {
 };
 
 export const useControls = ({ setPill }) => {
+  const [context, _] = useContext(Context);
+
+  const { virusLocation: virusesOrPills } = context;
   // TODO: this can be reused by pillDrop timer (rows)
   const updatePillLocation = useCallback(
     (
-      validationCallback: (pill: Pill) => boolean,
+      // TODO: prov refactor this so that validation is always done when moving
+      // TODO: we will need to refactor this shit before gets too complicated but too lazy for now
+      validationCallback: ({ pill, virusesOrPills }: MoveCheck) => boolean,
       moveCallback: (pill: Pill) => Pill
     ) => {
       setPill((prev) => {
-        if (validationCallback(prev)) {
+        if (validationCallback({ pill: prev, virusesOrPills })) {
           return moveCallback(prev);
         } else {
           return prev;

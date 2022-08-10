@@ -15,4 +15,7 @@ export const useStyles = makeStyles((theme: Theme) => ({
   taken: {
     background: "grey",
   },
+  virus: {
+    background: "red",
+  },
 }));

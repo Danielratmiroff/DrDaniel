@@ -3,18 +3,13 @@ import { useStyles } from "./NodeStyles";
 
 type NodeProps = {
   id: string;
-  isFree: boolean;
+  type: "free" | "taken" | "virus";
 };
 
-const Node: FC<NodeProps> = ({ isFree, id }) => {
+const Node: FC<NodeProps> = ({ type, id }) => {
   const styles = useStyles();
 
-  return (
-    <div
-      id={id}
-      className={`${styles.square} ${isFree ? styles.free : styles.taken}`}
-    ></div>
-  );
+  return <div id={id} className={`${styles.square} ${styles[type]}`}></div>;
 };
 
 export default Node;
