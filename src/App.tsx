@@ -1,21 +1,9 @@
 import React, { createContext, FC, useMemo, useState } from "react";
 import Grid from "./components/Grid/Grid";
 import { GenerateViruses } from "./hooks/generateViruses";
-import { indexes } from "../src/temporary.json";
-import { getPillLocationAsString } from "./utils/NodePosition";
-import { Pill } from "./types/types";
+import { IContext } from "./types/types";
 
 export const Context = createContext<any>(null);
-
-export interface IContext {
-  viruses: Pill[];
-  pills: Pill[];
-}
-
-export const pillStartPoint = {
-  col: indexes[indexes.length / 2 - 1], // align in the center column
-  row: 0,
-};
 
 const App: FC = () => {
   const virusAmount = 5;

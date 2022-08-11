@@ -9,8 +9,8 @@ import {
   movePillNextRow,
 } from "../../utils/NodePosition";
 import { Pill } from "../../types/types";
-
 import { Context } from "../../App";
+import { pillStartPoint } from "../../utils/constants";
 
 // type GridProps = {
 //   gridRef: any;
