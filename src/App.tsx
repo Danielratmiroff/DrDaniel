@@ -3,15 +3,16 @@ import Grid from "./components/Grid/Grid";
 import { GenerateViruses } from "./hooks/generateViruses";
 import { indexes } from "../src/temporary.json";
 import { getPillLocationAsString } from "./utils/NodePosition";
+import { Pill } from "./types/types";
 
 export const Context = createContext<any>(null);
 
 export interface IContext {
-  virusLocation: string[];
-  pillLocation: string[];
+  viruses: Pill[];
+  pills: Pill[];
 }
 
-const pillStartPoint = {
+export const pillStartPoint = {
   col: indexes[indexes.length / 2 - 1], // align in the center column
   row: 0,
 };
@@ -19,18 +20,25 @@ const pillStartPoint = {
 const App: FC = () => {
   const virusAmount = 5;
 
-  const [pill, setPill] = useState<Pill>();
-
   const viruses = useMemo(() => {
     return GenerateViruses({ amount: virusAmount });
   }, [virusAmount]);
 
-  const [context, setContext] = useState<IContext>({
-    virusLocation: viruses,
-    // TODO: i'm not sure about having this as a string instread as an obj -- continue here
-    // TODO: test how to check and restart pill when one stops
-    pillLocation: [getPillLocationAsString(pillStartPoint)],
+  // TODO: test how to check and restart pill when one stops
+  const [context, _setContext] = useState<IContext>({
+    viruses,
+    pills: [],
   });
+
+  const setContext = ({ viruses, pills }: Partial<IContext>) => {
+    _setContext((prev: IContext) => {
+      return {
+        ...prev,
+        ...viruses,
+        ...pills,
+      };
+    });
+  };
 
   return (
     <Context.Provider value={[context, setContext]}>

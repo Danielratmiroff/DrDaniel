@@ -16,11 +16,17 @@ import { Context } from "../../App";
 //   gridRef: any;
 // };
 //
+
 const Grid: FC = () => {
   const styles = useStyles();
-  const [context, setContext] = useContext(Context);
 
-  const { virusLocation: virusesOrPills, pillLocation } = context;
+  const [context, setContext] = useContext(Context);
+  const { viruses, pills } = context;
+
+  const virusesLocation = viruses.map((e: Pill) => getPillLocationAsString(e));
+  const pillsLocation = viruses.map((e: Pill) => getPillLocationAsString(e));
+
+  const [pill, setPill] = useState<Pill>(pillStartPoint);
 
   const buildGrid = useMemo(() => {
     const grid: string[][] = [];
@@ -39,17 +45,13 @@ const Grid: FC = () => {
 
   const moveToNextRow = () => {
     setPill((prev) => {
+      // tODO: conitnue here -- need to validate with context and pill objects
       if (isNextRowValid({ pill: prev, virusesOrPills })) {
         return movePillNextRow(prev);
       } else {
-        setContext({
-          ...context,
-          pillLocation: [...pillLocation, getPillLocationAsString(prev)],
-        });
-        console.log({
-          ...context,
-          pillLocation: [...pillLocation, getPillLocationAsString(prev)],
-        });
+        setContext({ pills: prev });
+        console.log({ pills: prev });
+
         return {
           col: indexes[indexes.length / 2 - 1], // align in the center column
           row: 0,
@@ -68,12 +70,12 @@ const Grid: FC = () => {
   }, []);
 
   // TODO: prob can move this to parent component
-  useControls({ setPill });
+  // useControls({ setPill });
 
   const RenderNode = ({ nodeId }: { nodeId: string }) => {
-    if (virusesOrPills.includes(nodeId)) {
+    if (virusesLocation.includes(nodeId)) {
       return <Node key={nodeId} type="virus" id={nodeId} />;
-    } else if (getPillLocationAsString(pill) !== nodeId) {
+    } else if (pillsLocation.includes(nodeId)) {
       return <Node key={nodeId} type="taken" id={nodeId} />;
     } else {
       return <Node key={nodeId} type="free" id={nodeId} />;

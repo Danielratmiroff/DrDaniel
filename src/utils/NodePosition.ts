@@ -55,9 +55,9 @@ export const isPrevColValid = ({
   let isValid = true;
   // TODO: prob refactor this to no duplicate between prev-next movements
 
-  if (virusesOrPills.includes(getPillLocationAsString(movePillNextRow(pill)))) {
-    isValid = false;
-  }
+  // if (virusesOrPills.includes(getPillLocationAsString(movePillNextRow(pill)))) {
+  //   isValid = false;
+  // }
 
   // check if we're at the end of the table
   if (!isNextRowValid({ pill, virusesOrPills })) {
