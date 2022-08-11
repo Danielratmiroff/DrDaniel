@@ -44,13 +44,13 @@ const Grid: FC = () => {
   }, []);
 
   const moveToNextRow = () => {
-    setPill((prev) => {
+    setPill((pill) => {
       // tODO: conitnue here -- need to validate with context and pill objects
-      if (isNextRowValid({ pill: prev, virusesOrPills })) {
-        return movePillNextRow(prev);
+      if (isNextRowValid({ pill, virusesLocation, pillsLocation })) {
+        return movePillNextRow(pill);
       } else {
-        setContext({ pills: prev });
-        console.log({ pills: prev });
+        setContext({ pills: pill });
+        console.log({ pills: pill });
 
         return {
           col: indexes[indexes.length / 2 - 1], // align in the center column

@@ -42,22 +42,28 @@ export const movePillNextCol = (pill: Pill): Pill => {
   };
 };
 
-export type MoveCheck = {
+export type ValidMoveParams = {
   pill: Pill;
-  virusesOrPills: string[];
+  virusesLocation: string[];
+  pillsLocation: string[];
 };
 
 // Valid movements
 export const isPrevColValid = ({
   pill,
-  virusesOrPills,
-}: MoveCheck): boolean => {
+  virusesLocation,
+  pillsLocation,
+}: ValidMoveParams): boolean => {
   let isValid = true;
+  const pillString = getPillLocationAsString(pill);
+
   // TODO: prob refactor this to no duplicate between prev-next movements
 
-  // if (virusesOrPills.includes(getPillLocationAsString(movePillNextRow(pill)))) {
-  //   isValid = false;
-  // }
+  if (
+    virusesLocation.includes(getPillLocationAsString(movePillNextRow(pill)))
+  ) {
+    isValid = false;
+  }
 
   // check if we're at the end of the table
   if (!isNextRowValid({ pill, virusesOrPills })) {
@@ -71,10 +77,7 @@ export const isPrevColValid = ({
   return isValid;
 };
 
-export const isNextColValid = ({
-  pill,
-  virusesOrPills,
-}: MoveCheck): boolean => {
+export const isNextColValid = ({ pill, context }: ValidMoveParams): boolean => {
   let isValid = true;
 
   if (virusesOrPills.includes(getPillLocationAsString(movePillNextRow(pill)))) {
@@ -90,10 +93,7 @@ export const isNextColValid = ({
   return isValid;
 };
 
-export const isNextRowValid = ({
-  pill,
-  virusesOrPills,
-}: MoveCheck): boolean => {
+export const isNextRowValid = ({ pill, context }: ValidMoveParams): boolean => {
   let isValid = true;
 
   if (peekNextRow(pill) >= indexes.length) {
