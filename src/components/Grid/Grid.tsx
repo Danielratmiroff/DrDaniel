@@ -1,12 +1,19 @@
-import React, { FC, useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  FC,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useStyles } from "./GridStyles";
 import Node from "../Node";
 import { indexes } from "../../temporary.json";
 import { useControls } from "../../hooks/controls";
 import {
   getPillLocationAsString,
-  isNextRowValid,
   movePillNextRow,
+  peekNextRow,
 } from "../../utils/NodePosition";
 import { Pill } from "../../types/types";
 import { Context } from "../../App";
@@ -20,13 +27,12 @@ import { pillStartPoint } from "../../utils/constants";
 const Grid: FC = () => {
   const styles = useStyles();
 
-  const [context, setContext] = useContext(Context);
-  const { viruses, pills } = context;
+  const { viruses, pills, setContext } = useContext(Context);
 
-  const virusesLocation = viruses.map((e: Pill) => getPillLocationAsString(e));
-  const pillsLocation = viruses.map((e: Pill) => getPillLocationAsString(e));
+  const virusesLocation = viruses.map((e) => getPillLocationAsString(e));
+  const pillsLocation = pills.map((e) => getPillLocationAsString(e));
 
-  const [pill, setPill] = useState<Pill>(pillStartPoint);
+  const [pill, setPill] = useState(pillStartPoint);
 
   const buildGrid = useMemo(() => {
     const grid: string[][] = [];
@@ -43,39 +49,56 @@ const Grid: FC = () => {
     // TODO: we re-render the whole board for now, cna be improved
   }, []);
 
-  const moveToNextRow = () => {
-    setPill((pill) => {
-      // tODO: conitnue here -- need to validate with context and pill objects
-      if (isNextRowValid({ pill, virusesLocation, pillsLocation })) {
-        return movePillNextRow(pill);
-      } else {
-        setContext({ pills: pill });
-        console.log({ pills: pill });
+  const isNextRowValid = (currPill): boolean => {
+    let isValid = true;
 
-        return {
-          col: indexes[indexes.length / 2 - 1], // align in the center column
-          row: 0,
-        };
-      }
-    });
+    if (peekNextRow(pill) >= indexes.length) {
+      isValid = false;
+    }
+
+    const nextRowAsString = getPillLocationAsString(movePillNextRow(currPill));
+    if (virusesLocation.includes(nextRowAsString)) {
+      isValid = false;
+    }
+    if (pillsLocation.includes(nextRowAsString)) {
+      isValid = false;
+    }
+
+    return isValid;
   };
+
+  const pillStateRef = useRef<Pill>();
+  pillStateRef.current = pill;
 
   // Pilldrop timer
   useEffect(() => {
     const pillTimer = setInterval(() => {
-      moveToNextRow();
+      const currPill = pillStateRef?.current;
+      if (currPill === undefined) {
+        return;
+      }
+
+      if (isNextRowValid(currPill)) {
+        setPill(movePillNextRow(currPill));
+      } else {
+        setContext({ pills: [...pills, currPill] });
+        setPill(pillStartPoint);
+      }
     }, 1000);
 
     return () => clearInterval(pillTimer);
   }, []);
 
   // TODO: prob can move this to parent component
-  // useControls({ setPill });
+  useControls({ setPill, isNextRowValid });
 
   const RenderNode = ({ nodeId }: { nodeId: string }) => {
     if (virusesLocation.includes(nodeId)) {
       return <Node key={nodeId} type="virus" id={nodeId} />;
-    } else if (pillsLocation.includes(nodeId)) {
+    } else if (
+      pillsLocation.includes(nodeId) ||
+      nodeId === getPillLocationAsString(pill)
+    ) {
       return <Node key={nodeId} type="taken" id={nodeId} />;
     } else {
       return <Node key={nodeId} type="free" id={nodeId} />;

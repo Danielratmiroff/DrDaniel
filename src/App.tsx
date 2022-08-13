@@ -1,9 +1,9 @@
 import React, { createContext, FC, useMemo, useState } from "react";
 import Grid from "./components/Grid/Grid";
 import { GenerateViruses } from "./hooks/generateViruses";
-import { IContext } from "./types/types";
+import { SetContextParams, IContext, Pill } from "./types/types";
 
-export const Context = createContext<any>(null);
+export const Context = createContext({} as IContext);
 
 const App: FC = () => {
   const virusAmount = 5;
@@ -12,13 +12,20 @@ const App: FC = () => {
     return GenerateViruses({ amount: virusAmount });
   }, [virusAmount]);
 
-  // TODO: test how to check and restart pill when one stops
-  const [context, _setContext] = useState<IContext>({
-    viruses,
-    pills: [],
-  });
+  const initContext: IContext = useMemo(() => {
+    return {
+      viruses,
+      pills: [] as Pill[],
+      setContext: (): void => {
+        throw new Error("setContext must be set");
+      },
+    };
+  }, []);
 
-  const setContext = ({ viruses, pills }: Partial<IContext>) => {
+  // TODO: test how to check and restart pill when one stops
+  const [contextState, _setContext] = useState(initContext);
+
+  const setContext = ({ viruses, pills }: SetContextParams) => {
     _setContext((prev: IContext) => {
       return {
         ...prev,
@@ -29,7 +36,7 @@ const App: FC = () => {
   };
 
   return (
-    <Context.Provider value={[context, setContext]}>
+    <Context.Provider value={{ ...contextState, setContext }}>
       <Grid />
     </Context.Provider>
   );
