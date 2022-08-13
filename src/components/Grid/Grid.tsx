@@ -29,10 +29,18 @@ const Grid: FC = () => {
 
   const { viruses, pills, setContext } = useContext(Context);
 
+  const [pill, setPill] = useState(pillStartPoint);
+
+  // TODO: has to be a better way to maintain the current state accesible
+  const pillStateRef = useRef<Pill>();
+  pillStateRef.current = pill;
+  const pillsStateRef = useRef<Pill[]>();
+  pillsStateRef.current = pills;
+  const virusesStateRef = useRef<Pill[]>();
+  virusesStateRef.current = viruses;
+
   const virusesLocation = viruses.map((e) => getPillLocationAsString(e));
   const pillsLocation = pills.map((e) => getPillLocationAsString(e));
-
-  const [pill, setPill] = useState(pillStartPoint);
 
   const buildGrid = useMemo(() => {
     const grid: string[][] = [];
@@ -52,7 +60,7 @@ const Grid: FC = () => {
   const isNextRowValid = (currPill): boolean => {
     let isValid = true;
 
-    if (peekNextRow(pill) >= indexes.length) {
+    if (peekNextRow(currPill) >= indexes.length) {
       isValid = false;
     }
 
@@ -66,9 +74,6 @@ const Grid: FC = () => {
 
     return isValid;
   };
-
-  const pillStateRef = useRef<Pill>();
-  pillStateRef.current = pill;
 
   // Pilldrop timer
   useEffect(() => {
@@ -87,7 +92,7 @@ const Grid: FC = () => {
     }, 1000);
 
     return () => clearInterval(pillTimer);
-  }, []);
+  }, [viruses, pills]);
 
   // TODO: prob can move this to parent component
   useControls({ setPill, isNextRowValid });

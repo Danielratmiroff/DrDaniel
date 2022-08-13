@@ -20,17 +20,16 @@ const App: FC = () => {
         throw new Error("setContext must be set");
       },
     };
-  }, []);
+  }, [viruses]);
 
-  // TODO: test how to check and restart pill when one stops
   const [contextState, _setContext] = useState(initContext);
 
   const setContext = ({ viruses, pills }: SetContextParams) => {
     _setContext((prev: IContext) => {
       return {
         ...prev,
-        ...viruses,
-        ...pills,
+        viruses: viruses ? viruses : prev.viruses,
+        pills: pills ? pills : prev.pills,
       };
     });
   };
