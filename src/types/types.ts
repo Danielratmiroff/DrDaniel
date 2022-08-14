@@ -1,22 +1,14 @@
 // General types and interfaces
 
 export type SetContextParams = {
-  viruses?: Pill[];
-  pills?: Pill[];
+  viruses?: number[];
+  pills?: number[];
 };
 
 export interface IContext {
-  pills: Pill[];
-  viruses: Pill[];
+  pills: number[];
+  viruses: number[];
   setContext: ({ viruses, pills }: SetContextParams) => void;
 }
 
-export type Pill = {
-  col: string;
-  row: number;
-};
-
-export type ValidMoveParams = {
-  pill: Pill;
-  context: IContext;
-};
+export type NodeLocation = { nodeId: number };

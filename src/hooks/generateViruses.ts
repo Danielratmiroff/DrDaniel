@@ -1,28 +1,13 @@
-import { indexes } from "../temporary.json";
-import { Pill } from "../types/types";
+import { gridSize } from "../utils/constants";
 
-type GenerateVirusesProps = {
-  amount: number;
-};
-
-export function GetRandomInt(max: number): number {
-  return Math.floor(Math.random() * max);
+function getRandomInt(max: number): number {
+  return Math.floor(Math.random() * max) + 1;
 }
 
-export const GenerateViruses = ({ amount }: GenerateVirusesProps) => {
-  const generatedViruses: Pill[] = (() => {
-    let viruses: Pill[] = [];
-    for (let i = 0; i < amount; i++) {
-      const virus: Pill = {
-        col: indexes[GetRandomInt(indexes.length)],
-        row: GetRandomInt(indexes.length),
-      };
-
-      viruses.push(virus);
-    }
-
-    return viruses;
-  })();
-
-  return generatedViruses;
+export const GenerateViruses = (amount: number) => {
+  let viruses: number[] = [];
+  for (let i = 0; i < amount; i++) {
+    viruses.push(getRandomInt(gridSize * gridSize) - gridSize);
+  }
+  return viruses;
 };

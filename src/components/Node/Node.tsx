@@ -2,14 +2,13 @@ import { FC } from "react";
 import { useStyles } from "./NodeStyles";
 
 type NodeProps = {
-  id: string;
   type: "free" | "taken" | "virus";
 };
 
-const Node: FC<NodeProps> = ({ type, id }) => {
+const Node: FC<NodeProps> = ({ type }) => {
   const styles = useStyles();
 
-  return <div id={id} className={`${styles.square} ${styles[type]}`}></div>;
+  return <div className={`${styles.square} ${styles[type]}`}></div>;
 };
 
 export default Node;
