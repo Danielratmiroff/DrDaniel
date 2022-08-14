@@ -3,6 +3,18 @@ import Grid from "./components/Grid/Grid";
 import { GenerateViruses } from "./hooks/generateViruses";
 import { SetContextParams, IContext, Pill } from "./types/types";
 
+// TODOLIST:
+// - add second half of pill -- now
+//      this can be maybe just another square (no need to group them together)
+//      once a square hits a blocker, we stop both at the same time and start a new one
+//      movemenet secuence would just apply to both the saem way they would have on ly different starting points
+// - pill completed with 4
+// - kill virus
+// - rotate functionality
+// - colors
+// - game over
+// - buttons for game options
+
 export const Context = createContext({} as IContext);
 
 const App: FC = () => {
