@@ -5,6 +5,8 @@ import { SetContextParams, IContext } from "./types/types";
 
 // TODOLIST:
 // - add second half of pill -- now
+//      make the pill as new class
+//
 //      this can be maybe just another square (no need to group them together)
 //      once a square hits a blocker, we stop both at the same time and start a new one
 //      movemenet secuence would just apply to both the saem way they would have on ly different starting points
