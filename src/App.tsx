@@ -1,7 +1,7 @@
 import React, { createContext, FC, useMemo, useState } from "react";
 import Grid from "./components/Grid/Grid";
 import { GenerateViruses } from "./hooks/generateViruses";
-import { SetContextParams, IContext, Pill } from "./types/types";
+import { SetContextParams, IContext } from "./types/types";
 
 // TODOLIST:
 // - add second half of pill -- now
@@ -20,14 +20,12 @@ export const Context = createContext({} as IContext);
 const App: FC = () => {
   const virusAmount = 5;
 
-  const viruses = useMemo(() => {
-    return GenerateViruses({ amount: virusAmount });
-  }, [virusAmount]);
+  const viruses = useMemo(() => GenerateViruses(virusAmount), [virusAmount]);
 
   const initContext: IContext = useMemo(() => {
     return {
       viruses,
-      pills: [] as Pill[],
+      pills: [],
       setContext: (): void => {
         throw new Error("setContext must be set");
       },
@@ -40,8 +38,8 @@ const App: FC = () => {
     _setContext((prev: IContext) => {
       return {
         ...prev,
-        viruses: viruses ? viruses : prev.viruses,
-        pills: pills ? pills : prev.pills,
+        pills: pills || prev.pills,
+        viruses: viruses || prev.viruses,
       };
     });
   };
