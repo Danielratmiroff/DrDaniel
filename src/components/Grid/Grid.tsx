@@ -9,8 +9,8 @@ import React, {
 import { useStyles } from "./GridStyles";
 import Node from "../Node";
 import { Context } from "../../App";
-import { gridSize, pillStartPoint } from "../../utils/constants";
-import { getNextRow } from "../../utils/NodePosition";
+import { gridSize, initialPill, pillStartPoint } from "../../utils/constants";
+import { getNextRow, pillNextRow } from "../../utils/NodePosition";
 import { useControls } from "../../hooks/controls";
 
 const grid = (() => {
@@ -29,7 +29,7 @@ const Grid: FC = () => {
   const styles = useStyles();
 
   const { viruses, pills, setContext } = useContext(Context);
-  const [pill, setPill] = useState([pillStartPoint, pillStartPoint]);
+  const [pill, setPill] = useState(initialPill);
 
   // Get current pill state
   const pillStateRef = useRef<number[]>();
@@ -50,6 +50,9 @@ const Grid: FC = () => {
     return isValid;
   };
 
+  const checkNextRow = (pill: number[]): boolean =>
+    pill.every((nodeId) => isNextRowValid(nodeId));
+
   // Pilldrop timer
   useEffect(() => {
     const pillTimer = setInterval(() => {
@@ -57,13 +60,12 @@ const Grid: FC = () => {
       if (!pill || pill.length !== 2) {
         return;
       }
-      // TODO: contienue here -- ajust checks for array
 
-      if (isNextRowValid(pill)) {
-        setPill(getNextRow(pill));
+      if (checkNextRow(pill)) {
+        setPill(pillNextRow(pill));
       } else {
-        setContext({ pills: [...pills, pill] });
-        setPill(pillStartPoint);
+        setContext({ pills: [...pills, ...pill] });
+        setPill(initialPill);
       }
     }, 1000);
 
@@ -75,7 +77,11 @@ const Grid: FC = () => {
   const RenderNode = ({ nodeId }: { nodeId: number }) => {
     if (viruses.includes(nodeId)) {
       return <Node key={nodeId} type="virus" />;
-    } else if (nodeId === pill || pills.includes(nodeId)) {
+    } else if (
+      nodeId === pill[0] ||
+      nodeId === pill[1] ||
+      pills.includes(nodeId)
+    ) {
       return <Node key={nodeId} type="taken" />;
     }
     return <Node key={nodeId} type="free" />;
