@@ -29,10 +29,10 @@ const Grid: FC = () => {
   const styles = useStyles();
 
   const { viruses, pills, setContext } = useContext(Context);
-  const [pill, setPill] = useState(pillStartPoint);
+  const [pill, setPill] = useState([pillStartPoint, pillStartPoint]);
 
   // Get current pill state
-  const pillStateRef = useRef<number>();
+  const pillStateRef = useRef<number[]>();
   pillStateRef.current = pill;
 
   const isNextRowValid = (nodeId: number): boolean => {
@@ -54,9 +54,10 @@ const Grid: FC = () => {
   useEffect(() => {
     const pillTimer = setInterval(() => {
       const pill = pillStateRef.current;
-      if (!pill) {
+      if (!pill || pill.length !== 2) {
         return;
       }
+      // TODO: contienue here -- ajust checks for array
 
       if (isNextRowValid(pill)) {
         setPill(getNextRow(pill));
