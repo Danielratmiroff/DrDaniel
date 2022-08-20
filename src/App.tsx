@@ -16,6 +16,10 @@ import { SetContextParams, IContext } from "./types/types";
 // - colors
 // - game over
 // - buttons for game options
+// - BUG:
+// - no viruses in start row
+// - leave prevrow pressed and goes up
+//
 
 export const Context = createContext({} as IContext);
 

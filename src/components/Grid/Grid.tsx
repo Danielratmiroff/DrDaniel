@@ -35,23 +35,22 @@ const Grid: FC = () => {
   const pillStateRef = useRef<number[]>();
   pillStateRef.current = pill;
 
-  const isNextRowValid = (nodeId: number): boolean => {
-    let isValid = true;
-
-    const nextRow = getNextRow(nodeId);
-    if (
-      nextRow >= gridSize * gridSize ||
-      viruses.includes(nextRow) ||
-      pills.includes(nextRow)
-    ) {
-      isValid = false;
-    }
+  const isNextRowValid = (pill: number[]): boolean => {
+    const isValid = pill.every((nodeId) => {
+      const nextRow = getNextRow(nodeId);
+      if (
+        nextRow >= gridSize * gridSize ||
+        viruses.includes(nextRow) ||
+        pills.includes(nextRow)
+      ) {
+        return false;
+      } else {
+        return true;
+      }
+    });
 
     return isValid;
   };
-
-  const checkNextRow = (pill: number[]): boolean =>
-    pill.every((nodeId) => isNextRowValid(nodeId));
 
   // Pilldrop timer
   useEffect(() => {
@@ -61,7 +60,7 @@ const Grid: FC = () => {
         return;
       }
 
-      if (checkNextRow(pill)) {
+      if (isNextRowValid(pill)) {
         setPill(pillNextRow(pill));
       } else {
         setContext({ pills: [...pills, ...pill] });

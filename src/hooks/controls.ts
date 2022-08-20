@@ -12,7 +12,7 @@ import { useKeyPress } from "./useKeyPress";
 type ControlsProps = {
   pill: number[];
   setPill: Dispatch<SetStateAction<number[]>>;
-  isNextRowValid: (nodeId: number) => boolean;
+  isNextRowValid: (pill: number[]) => boolean;
 };
 
 export const useControls = ({
@@ -22,49 +22,41 @@ export const useControls = ({
 }: ControlsProps) => {
   const { viruses, pills, setContext } = useContext(Context);
 
-  const checkPrevCol = (pill: number[]): boolean =>
-    pill.every((nodeId) => isPrevColValid(nodeId));
-  const checkNextCol = (pill: number[]): boolean =>
-    pill.every((nodeId) => isNextColValid(nodeId));
-
-  // TODO: continue here -- there is an issue when moving sideways, one block gets into the viurses
-  const isNextColValid = (nextCol: number): boolean => {
-    let isValid = true;
-
+  const isNextColValid = (pill: number[]): boolean => {
     // check if we're at the end of the table
-    if (
-      !isNextRowValid(nextCol) ||
-      viruses.includes(nextCol) ||
-      pills.includes(nextCol)
-    ) {
-      isValid = false;
+    if (!isNextRowValid(pill)) {
+      return false;
     }
 
+    const isValid = pill.every((nodeId) => {
+      const nextCol = getNextCol(nodeId);
+      return viruses.includes(nextCol) || pills.includes(nextCol);
+    });
     return isValid;
   };
 
-  const isPrevColValid = (nextCol: number): boolean => {
-    let isValid = true;
-
-    if (
-      !isNextRowValid(nextCol) ||
-      viruses.includes(nextCol) ||
-      pills.includes(nextCol)
-    ) {
-      isValid = false;
+  const isPrevColValid = (pill: number[]): boolean => {
+    // check if we're at the end of the table
+    if (!isNextRowValid(pill)) {
+      return false;
     }
+
+    const isValid = pill.every((nodeId) => {
+      const prevCol = getPrevCol(nodeId);
+      return viruses.includes(prevCol) || pills.includes(prevCol);
+    });
 
     return isValid;
   };
 
   const moveNextCol = () => {
-    if (checkNextCol(pill)) {
+    if (isNextColValid(pill)) {
       setPill(pillNextCol(pill));
     }
   };
 
   const movePrevCol = () => {
-    if (checkPrevCol(pill)) {
+    if (isPrevColValid(pill)) {
       setPill(pillPrevCol(pill));
     }
   };

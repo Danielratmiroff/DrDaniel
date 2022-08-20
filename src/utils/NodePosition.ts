@@ -13,6 +13,7 @@ export const pillNextCol = (pill: number[]): number[] => {
 
 export const pillPrevCol = (pill: number[]): number[] => {
   const move = pill.map((node) => node - 1);
+  console.log("move", move);
   return move;
 };
 
