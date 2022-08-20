@@ -24,7 +24,7 @@ import { SetContextParams, IContext } from "./types/types";
 export const Context = createContext({} as IContext);
 
 const App: FC = () => {
-  const virusAmount = 5;
+  const virusAmount = 0;
 
   const viruses = useMemo(() => GenerateViruses(virusAmount), [virusAmount]);
 
