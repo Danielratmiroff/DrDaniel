@@ -2,6 +2,7 @@ import React, { createContext, FC, useMemo, useState } from "react";
 import Grid from "./components/Grid/Grid";
 import { GenerateViruses } from "./hooks/generateViruses";
 import { SetContextParams, IContext } from "./types/types";
+import { virusAmount } from "./utils/constants";
 
 // TODOLIST:
 // - add second half of pill -- now
@@ -18,15 +19,15 @@ import { SetContextParams, IContext } from "./types/types";
 // - buttons for game options
 // - BUG:
 // - no viruses in start row
+// - viruses can have negative values
 // - leave prevrow pressed and goes up
+// - there needs to be a timer to avoid errors when holding key down
 //
 
 export const Context = createContext({} as IContext);
 
 const App: FC = () => {
-  const virusAmount = 0;
-
-  const viruses = useMemo(() => GenerateViruses(virusAmount), [virusAmount]);
+  const viruses = useMemo(() => GenerateViruses(virusAmount), []);
 
   const initContext: IContext = useMemo(() => {
     return {

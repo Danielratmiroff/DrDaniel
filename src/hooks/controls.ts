@@ -37,7 +37,7 @@ export const useControls = ({
 
     const isValid = pill.every((nodeId) => {
       const nextCol = getNextCol(nodeId);
-      return !viruses.includes(nextCol) || !pills.includes(nextCol);
+      return !viruses.includes(nextCol) && !pills.includes(nextCol);
     });
     return isValid;
   };
@@ -50,7 +50,7 @@ export const useControls = ({
 
     const isValid = pill.every((nodeId) => {
       const prevCol = getPrevCol(nodeId);
-      return !viruses.includes(prevCol) || !pills.includes(prevCol);
+      return !viruses.includes(prevCol) && !pills.includes(prevCol);
     });
 
     return isValid;
@@ -70,20 +70,20 @@ export const useControls = ({
 
   const [isPillHorizontal, setIsPillHorizontal] = useState(true);
   const rotatePill = () => {
-    // TODO: IDEA
+    // DEA
     // const moveVertical = pill.map((e) => e - 10); // moves the pill one row up (might be fun)
     const [node1, node2] = pill;
 
     if (isPillHorizontal) {
-      const newNode = node2 - (gridSize + 1);
-      // continue here
-      // TODO: need to make this a portable function that takes an array
-      // can be reused in all checks
-      if (viruses.includes(newNode) || pills.includes(newNode)) {
+      const newVerticalNode = node2 - (gridSize + 1);
+      if (
+        viruses.includes(newVerticalNode) ||
+        pills.includes(newVerticalNode)
+      ) {
         return;
       }
 
-      setPill([node1, node2 - (gridSize + 1)]);
+      setPill([node1, newVerticalNode]);
       setIsPillHorizontal(false);
     } else {
       setPill([node2 + gridSize, node1 + 1]);
