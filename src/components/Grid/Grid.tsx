@@ -35,6 +35,11 @@ const Grid: FC = () => {
   const pillStateRef = useRef<number[]>();
   pillStateRef.current = pill;
 
+  async function scanForPoints() {
+    // continue here -- need to delete row of pills when possible
+    console.log(pills);
+  }
+
   const isNextRowValid = (pill: number[]): boolean => {
     const isValid = pill.every((nodeId) => {
       const nextRow = getNextRow(nodeId);
@@ -43,6 +48,7 @@ const Grid: FC = () => {
         viruses.includes(nextRow) ||
         pills.includes(nextRow)
       ) {
+        scanForPoints();
         return false;
       } else {
         return true;
