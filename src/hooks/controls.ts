@@ -1,15 +1,8 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useContext,
-  useState,
-} from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { Context } from "../App";
 import { gridSize } from "../utils/constants";
 import {
   getNextCol,
-  getNextRow,
   getPrevCol,
   pillNextCol,
   pillPrevCol,
@@ -27,7 +20,7 @@ export const useControls = ({
   isNextRowValid,
   setPill,
 }: ControlsProps) => {
-  const { viruses, pills, setContext } = useContext(Context);
+  const { viruses, pills } = useContext(Context);
 
   const isNextColValid = (pill: number[]): boolean => {
     // check if we're at the end of the table

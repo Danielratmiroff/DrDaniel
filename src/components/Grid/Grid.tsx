@@ -62,7 +62,8 @@ const Grid: FC = () => {
       if (isNextRowValid(pill)) {
         setPill(pillNextRow(pill));
       } else {
-        setContext({ pills: [...pills, ...pill] });
+        const allPills = pills.concat(pill);
+        setContext({ pills: allPills });
         setPill(initialPill);
       }
     }, 1000);
