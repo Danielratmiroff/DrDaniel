@@ -7,16 +7,16 @@ import { virusAmount } from "./utils/constants";
 // TODOLIST:
 // - add second half of pill -- done
 // - pill completed with 4 -- done
+// - rotate functionality -- done
 // - kill virus
-// - rotate functionality
 // - colors
 // - game over
 // - buttons for game options
 // - BUG:
 // - no viruses in start row
-// - viruses can have negative values
+// - viruses can have negative values -- done
 // - leave prevrow pressed and goes up
-// - there needs to be a timer to avoid errors when holding key down
+// - there needs to be a timer to avoid errors when holding key down -- done
 //
 
 export const Context = createContext({} as IContext);

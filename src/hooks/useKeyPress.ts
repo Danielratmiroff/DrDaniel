@@ -1,6 +1,6 @@
-import { FC, useEffect, KeyboardEvent, useState, createRef } from "react";
+import { useEffect } from "react";
 
-export const useKeyPress = (targetKey, handler) => {
+export const useKeyPress = (targetKey: any, handler: any) => {
   const downHandler = ({ key }) => {
     if (key === targetKey) {
       handler();
@@ -8,10 +8,10 @@ export const useKeyPress = (targetKey, handler) => {
   };
 
   useEffect(() => {
-    window.addEventListener("keydown", downHandler);
+    window.addEventListener("keyup", downHandler);
     // Remove event listeners on cleanup
     return () => {
-      window.removeEventListener("keydown", downHandler);
+      window.removeEventListener("keyup", downHandler);
     };
   });
 };

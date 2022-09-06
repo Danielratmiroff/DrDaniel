@@ -1,15 +1,8 @@
-import React, {
-  FC,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { FC, useContext, useEffect, useRef, useState } from "react";
 import { useStyles } from "./GridStyles";
 import Node from "../Node";
 import { Context } from "../../App";
-import { gridSize, initialPill, pillStartPoint } from "../../utils/constants";
+import { gridSize, initialPill } from "../../utils/constants";
 import { getNextRow, pillNextRow } from "../../utils/NodePosition";
 import { useControls } from "../../hooks/controls";
 
