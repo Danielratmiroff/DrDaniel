@@ -29,8 +29,8 @@ const Grid: FC = () => {
   pillStateRef.current = pill;
 
   async function scanForPoints() {
-    // continue here -- need to delete row of pills when possible
-    console.log(pills);
+    // TODO: add the scan points here? really?
+    // console.log(pills);
   }
 
   const isNextRowValid = (pill: number[]): boolean => {

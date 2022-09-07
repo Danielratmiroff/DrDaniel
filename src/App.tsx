@@ -23,38 +23,56 @@ export const Context = createContext({} as IContext);
 
 function sortNodes(pills: number[], viruses: number[]) {
   const allNodes = pills.concat(viruses);
-  const sortedNodes = allNodes.sort((a, b) => a - b);
+  const noDuplicates = new Set(allNodes);
+  const sortedNodes = Array.from(noDuplicates).sort((a, b) => a - b);
 
   return sortedNodes;
 }
 
-const a = [1, 3, 4, 5, 6, 9, 19, 20, 100];
-const b = [1, 11, 21, 31, 41, 100];
+function removeFromNodes(nodes: number[], scores: number[]) {
+  // TODO: continue here -- somethings off here
+  return scores.filter((score) => !nodes.includes(score));
+}
 
-function deleteNodesThatCountAsScore(sortedNodes: number[]) {
-  let a: any = [];
+function scanForPossiblePoints(pills: number[], viruses: number[]) {
+  const sortedNodes = sortNodes(pills, viruses);
 
-  for (let i = 0; i < sortedNodes.length; i++) {
-    // continue here -- need to remove nodes following each others number
-    const val1 = sortedNodes[i] - sortedNodes[i + 1];
-    const val2 = sortedNodes[i] - sortedNodes[i + 2];
-    const val3 = sortedNodes[i] - sortedNodes[i + 3];
-    if (val1 === -1 && val2 === -2 && val3 === -3) {
-      i += 3;
-    } else {
-      a.push(sortedNodes[i]);
-    }
+  const scores = deleteNodesThatCountAsScore(sortedNodes, [], [], 0) || [];
+  const valid = removeFromNodes(sortedNodes, scores);
+  return valid;
+}
+
+// TODO: refactor
+function deleteNodesThatCountAsScore(
+  nodes: number[],
+  acc: number[],
+  matches: number[],
+  i: number
+) {
+  const nextIndex = i + 1;
+
+  if (matches.length === 4) {
+    acc = [...acc, ...matches];
+    deleteNodesThatCountAsScore(nodes, acc, [], nextIndex);
   }
-  return a;
+  if (i === nodes.length) {
+    return acc;
+  }
+
+  const currNode = nodes[i];
+  const nextPossibleValue = currNode + 1;
+  const nextNode = nodes[nextIndex];
+
+  if (nextPossibleValue === nextNode) {
+    const newMatch = [...matches, currNode];
+    deleteNodesThatCountAsScore(nodes, acc, newMatch, nextIndex);
+  } else {
+    deleteNodesThatCountAsScore(nodes, acc, [], nextIndex);
+  }
 }
 
 const App: FC = () => {
   const viruses = useMemo(() => GenerateViruses(virusAmount), []);
-
-  useEffect(() => {
-    deleteNodesThatCountAsScore(a);
-  }, []);
-
   const initContext: IContext = useMemo(() => {
     return {
       viruses,
@@ -72,13 +90,12 @@ const App: FC = () => {
       const unsortedPills = pills || prev.pills;
       const unsortedViruses = viruses || prev.viruses;
 
-      const sortedNodes = sortNodes(unsortedPills, unsortedViruses);
-
-      const pillse = deleteNodesThatCountAsScore(sortedNodes);
+      const valid = scanForPossiblePoints(unsortedPills, unsortedViruses);
+      console.log(valid);
 
       return {
         ...prev,
-        pills: pillse,
+        pills: unsortedPills,
         viruses: unsortedViruses,
       };
     });
