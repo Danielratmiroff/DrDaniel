@@ -21,41 +21,42 @@ import { virusAmount } from "./utils/constants";
 
 export const Context = createContext({} as IContext);
 
-function sortNodes(pills: number[], viruses: number[]) {
-  const allNodes = pills.concat(viruses);
-  const noDuplicates = new Set(allNodes);
+function sortNodes(nodes: number[]) {
+  const noDuplicates = new Set(nodes);
   const sortedNodes = Array.from(noDuplicates).sort((a, b) => a - b);
 
   return sortedNodes;
 }
 
 function removeFromNodes(nodes: number[], scores: number[]) {
-  // TODO: continue here -- somethings off here
-  return scores.filter((score) => !nodes.includes(score));
+  return nodes.filter((node) => !scores.includes(node));
 }
 
-function scanForPossiblePoints(pills: number[], viruses: number[]) {
-  const sortedNodes = sortNodes(pills, viruses);
-
-  const scores = deleteNodesThatCountAsScore(sortedNodes, [], [], 0) || [];
+function scanForPossiblePoints(nodes: number[]) {
+  const sortedNodes = sortNodes(nodes);
+  const scores = deleteNodesThatCountAsScore(sortedNodes, [], [], 0);
   const valid = removeFromNodes(sortedNodes, scores);
   return valid;
 }
 
 // TODO: refactor
 function deleteNodesThatCountAsScore(
-  nodes: number[],
-  acc: number[],
-  matches: number[],
-  i: number
-) {
+  nodes: number[] = [],
+  acc: number[] = [],
+  matches: number[] = [],
+  i: number = 0
+): number[] {
+  if (nodes.length === 0) {
+    return [];
+  }
+
   const nextIndex = i + 1;
 
   if (matches.length === 4) {
     acc = [...acc, ...matches];
-    deleteNodesThatCountAsScore(nodes, acc, [], nextIndex);
+    return deleteNodesThatCountAsScore(nodes, acc, [], nextIndex);
   }
-  if (i === nodes.length) {
+  if (i >= nodes.length) {
     return acc;
   }
 
@@ -65,10 +66,13 @@ function deleteNodesThatCountAsScore(
 
   if (nextPossibleValue === nextNode) {
     const newMatch = [...matches, currNode];
-    deleteNodesThatCountAsScore(nodes, acc, newMatch, nextIndex);
+    return deleteNodesThatCountAsScore(nodes, acc, newMatch, nextIndex);
   } else {
-    deleteNodesThatCountAsScore(nodes, acc, [], nextIndex);
+    return deleteNodesThatCountAsScore(nodes, acc, [], nextIndex);
   }
+  // continue here -- there's something odd with adding the current node but checking for the next <one>
+  // added a pic in notion
+  // </one>
 }
 
 const App: FC = () => {
@@ -90,13 +94,14 @@ const App: FC = () => {
       const unsortedPills = pills || prev.pills;
       const unsortedViruses = viruses || prev.viruses;
 
-      const valid = scanForPossiblePoints(unsortedPills, unsortedViruses);
-      console.log(valid);
+      const validPills = scanForPossiblePoints(unsortedPills);
+      // const validViruses = scanForPossiblePoints(unsortedViruses);
 
       return {
         ...prev,
-        pills: unsortedPills,
-        viruses: unsortedViruses,
+        pills: validPills,
+        // viruses: validViruses || [],
+        viruses: [],
       };
     });
   };

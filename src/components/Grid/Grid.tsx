@@ -66,7 +66,7 @@ const Grid: FC = () => {
         setContext({ pills: allPills });
         setPill(initialPill);
       }
-    }, 1000);
+    }, 500);
 
     return () => clearInterval(pillTimer);
   }, [viruses, pills]);
