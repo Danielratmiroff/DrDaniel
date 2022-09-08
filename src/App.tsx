@@ -8,10 +8,16 @@ import { virusAmount } from "./utils/constants";
 // - add second half of pill -- done
 // - pill completed with 4 -- done
 // - rotate functionality -- done
+// - kill existing pills
+//      - horizontally - done
+//      - vertically
 // - kill virus
 // - colors
 // - game over
 // - buttons for game options
+// - install vitest
+// - write proper tests for delete pills / kills functions
+// - refactor them
 // - BUG:
 // - no viruses in start row
 // - viruses can have negative values -- done
@@ -39,7 +45,7 @@ function scanForPossiblePoints(nodes: number[]) {
   return valid;
 }
 
-// TODO: refactor
+// TODO: refactor after creating a test
 function deleteNodesThatCountAsScore(
   nodes: number[] = [],
   acc: number[] = [],
@@ -64,15 +70,21 @@ function deleteNodesThatCountAsScore(
   const nextPossibleValue = currNode + 1;
   const nextNode = nodes[nextIndex];
 
+  const peekTwoNext = nodes[i + 2];
+
   if (nextPossibleValue === nextNode) {
-    const newMatch = [...matches, currNode];
+    let newMatch: number[];
+
+    newMatch = [...matches, currNode];
+
+    if (peekTwoNext - 1 !== nextNode) {
+      newMatch.push(nextNode);
+    }
+
     return deleteNodesThatCountAsScore(nodes, acc, newMatch, nextIndex);
   } else {
     return deleteNodesThatCountAsScore(nodes, acc, [], nextIndex);
   }
-  // continue here -- there's something odd with adding the current node but checking for the next <one>
-  // added a pic in notion
-  // </one>
 }
 
 const App: FC = () => {

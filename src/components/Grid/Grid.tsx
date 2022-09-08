@@ -22,6 +22,7 @@ const Grid: FC = () => {
   const styles = useStyles();
 
   const { viruses, pills, setContext } = useContext(Context);
+  // TODO: refactir this to use useReducer instead of useState
   const [pill, setPill] = useState(initialPill);
 
   // Get current pill state
