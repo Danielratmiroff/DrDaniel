@@ -3,6 +3,7 @@ import Grid from "./components/Grid/Grid";
 import { GenerateViruses } from "./hooks/generateViruses";
 import { SetContextParams, IContext } from "./types/types";
 import { virusAmount } from "./utils/constants";
+import { GetScoredNodes } from "./utils/find-sequential-numbers";
 
 // TODOLIST:
 // - add second half of pill -- done
@@ -10,7 +11,7 @@ import { virusAmount } from "./utils/constants";
 // - rotate functionality -- done
 // - kill existing pills
 //      - horizontally - done
-//      - vertically
+//      - vertically - done
 // - kill virus
 // - colors
 // - game over
@@ -19,72 +20,19 @@ import { virusAmount } from "./utils/constants";
 // - write proper tests for delete pills / kills functions
 // - refactor them
 // - BUG:
+// - if there are more than 4 in a row, doesn't delete
+// - leave it running and eventually deletion fails for some reason
 // - no viruses in start row
-// - viruses can have negative values -- done
 // - leave prevrow pressed and goes up
+// - viruses can have negative values -- done
 // - there needs to be a timer to avoid errors when holding key down -- done
 //
 
 export const Context = createContext({} as IContext);
 
-function sortNodes(nodes: number[]) {
-  const noDuplicates = new Set(nodes);
-  const sortedNodes = Array.from(noDuplicates).sort((a, b) => a - b);
-
-  return sortedNodes;
-}
-
-function removeFromNodes(nodes: number[], scores: number[]) {
-  return nodes.filter((node) => !scores.includes(node));
-}
-
-function scanForPossiblePoints(nodes: number[]) {
-  const sortedNodes = sortNodes(nodes);
-  const scores = deleteNodesThatCountAsScore(sortedNodes, [], [], 0);
-  const valid = removeFromNodes(sortedNodes, scores);
-  return valid;
-}
-
-// TODO: refactor after creating a test
-function deleteNodesThatCountAsScore(
-  nodes: number[] = [],
-  acc: number[] = [],
-  matches: number[] = [],
-  i: number = 0
-): number[] {
-  if (nodes.length === 0) {
-    return [];
-  }
-
-  const nextIndex = i + 1;
-
-  if (matches.length === 4) {
-    acc = [...acc, ...matches];
-    return deleteNodesThatCountAsScore(nodes, acc, [], nextIndex);
-  }
-  if (i >= nodes.length) {
-    return acc;
-  }
-
-  const currNode = nodes[i];
-  const nextPossibleValue = currNode + 1;
-  const nextNode = nodes[nextIndex];
-
-  const peekTwoNext = nodes[i + 2];
-
-  if (nextPossibleValue === nextNode) {
-    let newMatch: number[];
-
-    newMatch = [...matches, currNode];
-
-    if (peekTwoNext - 1 !== nextNode) {
-      newMatch.push(nextNode);
-    }
-
-    return deleteNodesThatCountAsScore(nodes, acc, newMatch, nextIndex);
-  } else {
-    return deleteNodesThatCountAsScore(nodes, acc, [], nextIndex);
-  }
+// TODO refactor this (probably can move to find file)
+function scanForPossiblePoints(nodes: number[]): number[] {
+  return GetScoredNodes(nodes);
 }
 
 const App: FC = () => {
@@ -106,6 +54,7 @@ const App: FC = () => {
       const unsortedPills = pills || prev.pills;
       const unsortedViruses = viruses || prev.viruses;
 
+      // TODO rename this
       const validPills = scanForPossiblePoints(unsortedPills);
       // const validViruses = scanForPossiblePoints(unsortedViruses);
 

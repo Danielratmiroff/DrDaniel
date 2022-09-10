@@ -3,7 +3,7 @@ import { useStyles } from "./GridStyles";
 import Node from "../Node";
 import { Context } from "../../App";
 import { gridSize, initialPill } from "../../utils/constants";
-import { getNextRow, pillNextRow } from "../../utils/NodePosition";
+import { getNextRow, pillNextRow } from "../../utils/node-position";
 import { useControls } from "../../hooks/controls";
 
 const grid = (() => {

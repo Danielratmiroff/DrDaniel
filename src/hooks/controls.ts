@@ -6,7 +6,7 @@ import {
   getPrevCol,
   pillNextCol,
   pillPrevCol,
-} from "../utils/NodePosition";
+} from "../utils/node-position";
 import { useKeyPress } from "./useKeyPress";
 
 type ControlsProps = {
