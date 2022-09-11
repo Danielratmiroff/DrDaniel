@@ -1,9 +1,21 @@
-import React, { FC, useContext, useEffect, useRef, useState } from "react";
+import React, {
+  FC,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { useStyles } from "./GridStyles";
 import Node from "../Node";
 import { Context } from "../../App";
 import { gridSize, initialPill } from "../../utils/constants";
-import { getNextRow, pillNextRow } from "../../utils/node-position";
+import {
+  getNextRow,
+  pillNextCol,
+  pillNextRow,
+  pillPrevCol,
+} from "../../utils/node-position";
 import { useControls } from "../../hooks/controls";
 
 const grid = (() => {
@@ -18,16 +30,29 @@ const grid = (() => {
   return grid;
 })();
 
+const pillReducer = (state, action) => {
+  switch (action.type) {
+    case "DROP":
+      return { pill: pillNextRow(state.pill) };
+    case "NEXT_COL":
+      return { pill: pillNextCol(state.pill) };
+    case "PREV_COL":
+      return { pill: pillPrevCol(state.pill) };
+    case "RESET":
+      return { pill: initialPill };
+    case "SET":
+      return { pill: action.payload };
+    default:
+      throw new Error("Set Pill reducer error");
+  }
+};
+
 const Grid: FC = () => {
   const styles = useStyles();
 
   const { viruses, pills, setContext } = useContext(Context);
-  // TODO: refactir this to use useReducer instead of useState
-  const [pill, setPill] = useState(initialPill);
 
-  // Get current pill state
-  const pillStateRef = useRef<number[]>();
-  pillStateRef.current = pill;
+  const [state, dispatch] = useReducer(pillReducer, { pill: initialPill });
 
   async function scanForPoints() {
     // TODO: add the scan points here? really?
@@ -53,6 +78,9 @@ const Grid: FC = () => {
   };
 
   // Pilldrop timer
+  const pillStateRef = useRef<number[]>();
+  pillStateRef.current = state.pill; // current pill state inside the timer
+
   useEffect(() => {
     const pillTimer = setInterval(() => {
       const pill = pillStateRef.current;
@@ -61,25 +89,29 @@ const Grid: FC = () => {
       }
 
       if (isNextRowValid(pill)) {
-        setPill(pillNextRow(pill));
+        dispatch({ type: "DROP" });
       } else {
         const allPills = pills.concat(pill);
         setContext({ pills: allPills });
-        setPill(initialPill);
+        dispatch({ type: "RESET" });
       }
     }, 500);
 
     return () => clearInterval(pillTimer);
   }, [viruses, pills]);
 
-  useControls({ pill: pillStateRef.current, setPill, isNextRowValid });
+  useControls({
+    pill: state.pill,
+    dispatch: dispatch,
+    isNextRowValid,
+  });
 
   const RenderNode = ({ nodeId }: { nodeId: number }) => {
     if (viruses.includes(nodeId)) {
       return <Node key={nodeId} type="virus" />;
     } else if (
-      nodeId === pill[0] ||
-      nodeId === pill[1] ||
+      nodeId === state.pill[0] ||
+      nodeId === state.pill[1] ||
       pills.includes(nodeId)
     ) {
       return <Node key={nodeId} type="taken" />;

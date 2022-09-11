@@ -11,14 +11,14 @@ import { useKeyPress } from "./useKeyPress";
 
 type ControlsProps = {
   pill: number[];
-  setPill: Dispatch<SetStateAction<number[]>>;
+  dispatch: Dispatch<any>;
   isNextRowValid: (pill: number[]) => boolean;
 };
 
 export const useControls = ({
   pill,
   isNextRowValid,
-  setPill,
+  dispatch,
 }: ControlsProps) => {
   const { viruses, pills } = useContext(Context);
 
@@ -51,13 +51,13 @@ export const useControls = ({
 
   const moveNextCol = () => {
     if (isNextColValid(pill)) {
-      setPill(pillNextCol(pill));
+      dispatch({ type: "NEXT_COL" });
     }
   };
 
   const movePrevCol = () => {
     if (isPrevColValid(pill)) {
-      setPill(pillPrevCol(pill));
+      dispatch({ type: "PREV_COL" });
     }
   };
 
@@ -76,10 +76,10 @@ export const useControls = ({
         return;
       }
 
-      setPill([node1, newVerticalNode]);
+      dispatch({ type: "SET", payload: [node1, newVerticalNode] });
       setIsPillHorizontal(false);
     } else {
-      setPill([node2 + gridSize, node1 + 1]);
+      dispatch({ type: "SET", payload: [node2 + gridSize, node1 + 1] });
       setIsPillHorizontal(true);
     }
   };

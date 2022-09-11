@@ -1,6 +1,6 @@
 // General constants
 
-export const virusAmount = 0;
+export const virusAmount = 5;
 
 export const gridSize = 10;
 

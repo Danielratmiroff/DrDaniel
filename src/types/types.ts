@@ -12,3 +12,9 @@ export interface IContext {
 }
 
 export type NodeLocation = { nodeId: number };
+
+export type Node = {
+  id: number;
+  type: "free" | "virus" | "pill";
+  color: "red" | "blue" | "green" | "yellow";
+};
