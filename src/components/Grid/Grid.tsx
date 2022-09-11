@@ -17,6 +17,7 @@ import {
   pillPrevCol,
 } from "../../utils/node-position";
 import { useControls } from "../../hooks/controls";
+import { MOVEMENTS, NODE_TYPES } from "../../types/types";
 
 const grid = (() => {
   let grid: number[][] = [];
@@ -32,15 +33,15 @@ const grid = (() => {
 
 const pillReducer = (state, action) => {
   switch (action.type) {
-    case "DROP":
+    case MOVEMENTS.DROP:
       return { pill: pillNextRow(state.pill) };
-    case "NEXT_COL":
+    case MOVEMENTS.NEXT_COL:
       return { pill: pillNextCol(state.pill) };
-    case "PREV_COL":
+    case MOVEMENTS.PREV_COL:
       return { pill: pillPrevCol(state.pill) };
-    case "RESET":
+    case MOVEMENTS.RESET:
       return { pill: initialPill };
-    case "SET":
+    case MOVEMENTS.SET:
       return { pill: action.payload };
     default:
       throw new Error("Set Pill reducer error");
@@ -89,11 +90,11 @@ const Grid: FC = () => {
       }
 
       if (isNextRowValid(pill)) {
-        dispatch({ type: "DROP" });
+        dispatch({ type: MOVEMENTS.DROP });
       } else {
         const allPills = pills.concat(pill);
         setContext({ pills: allPills });
-        dispatch({ type: "RESET" });
+        dispatch({ type: MOVEMENTS.RESET });
       }
     }, 500);
 
@@ -108,15 +109,15 @@ const Grid: FC = () => {
 
   const RenderNode = ({ nodeId }: { nodeId: number }) => {
     if (viruses.includes(nodeId)) {
-      return <Node key={nodeId} type="virus" />;
+      return <Node key={nodeId} type={NODE_TYPES.VIRUS} />;
     } else if (
       nodeId === state.pill[0] ||
       nodeId === state.pill[1] ||
       pills.includes(nodeId)
     ) {
-      return <Node key={nodeId} type="taken" />;
+      return <Node key={nodeId} type={NODE_TYPES.PILL} />;
     }
-    return <Node key={nodeId} type="free" />;
+    return <Node key={nodeId} type={NODE_TYPES.FREE} />;
   };
 
   return (

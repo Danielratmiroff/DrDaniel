@@ -1,12 +1,8 @@
 import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { Context } from "../App";
+import { MOVEMENTS } from "../types/types";
 import { gridSize } from "../utils/constants";
-import {
-  getNextCol,
-  getPrevCol,
-  pillNextCol,
-  pillPrevCol,
-} from "../utils/node-position";
+import { getNextCol, getPrevCol } from "../utils/node-position";
 import { useKeyPress } from "./useKeyPress";
 
 type ControlsProps = {
@@ -23,7 +19,7 @@ export const useControls = ({
   const { viruses, pills } = useContext(Context);
 
   const isNextColValid = (pill: number[]): boolean => {
-    // check if we're at the end of the table
+    // end of the table?
     if (!isNextRowValid(pill)) {
       return false;
     }
@@ -36,7 +32,7 @@ export const useControls = ({
   };
 
   const isPrevColValid = (pill: number[]): boolean => {
-    // check if we're at the end of the table
+    // end of the table?
     if (!isNextRowValid(pill)) {
       return false;
     }
@@ -51,13 +47,13 @@ export const useControls = ({
 
   const moveNextCol = () => {
     if (isNextColValid(pill)) {
-      dispatch({ type: "NEXT_COL" });
+      dispatch({ type: MOVEMENTS.NEXT_COL });
     }
   };
 
   const movePrevCol = () => {
     if (isPrevColValid(pill)) {
-      dispatch({ type: "PREV_COL" });
+      dispatch({ type: MOVEMENTS.PREV_COL });
     }
   };
 
@@ -76,10 +72,10 @@ export const useControls = ({
         return;
       }
 
-      dispatch({ type: "SET", payload: [node1, newVerticalNode] });
+      dispatch({ type: MOVEMENTS.SET, payload: [node1, newVerticalNode] });
       setIsPillHorizontal(false);
     } else {
-      dispatch({ type: "SET", payload: [node2 + gridSize, node1 + 1] });
+      dispatch({ type: MOVEMENTS.SET, payload: [node2 + gridSize, node1 + 1] });
       setIsPillHorizontal(true);
     }
   };

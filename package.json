@@ -22,6 +22,7 @@
     "react-redux": "^7.2.4",
     "react-scripts": "4.0.3",
     "typescript": "^4.0.3",
+    "vitest": "^0.23.2",
     "web-vitals": "^0.2.4",
     "workbox-background-sync": "^5.1.3",
     "workbox-broadcast-update": "^5.1.3",
@@ -40,7 +41,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "vitest run",
+    "test-watch": "vitest",
+    "coverage": "vitest --run coverage",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -60,5 +63,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "vite": "^3.1.0"
   }
 }

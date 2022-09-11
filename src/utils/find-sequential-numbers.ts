@@ -1,6 +1,6 @@
 import { gridSize } from "./constants";
 
-function sortNodes(nodes: number[]) {
+export function sortNodes(nodes: number[]) {
   const noDuplicates = new Set(nodes);
   const sortedNodes = Array.from(noDuplicates).sort((a, b) => a - b);
   return sortedNodes;
@@ -53,7 +53,7 @@ function findSequenceOfNumbersVertically({
   currMatches,
   index,
   diff,
-}) {
+}: SequenceOfNumbers) {
   if (nodes.length === 0) {
     return acc;
   }
@@ -96,7 +96,7 @@ function findSequenceOfNumbersVertically({
 }
 
 // TODO: refactor this
-function findSequenceOfNumbers({
+export function findSequenceOfNumbers({
   nodes,
   acc,
   currMatches,

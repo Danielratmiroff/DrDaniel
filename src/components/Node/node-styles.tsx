@@ -12,7 +12,7 @@ export const useStyles = makeStyles((theme: Theme) => ({
   free: {
     background: "grey",
   },
-  taken: {
+  pill: {
     background: "black",
   },
   virus: {
