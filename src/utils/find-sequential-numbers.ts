@@ -13,7 +13,7 @@ function removeScoredValuesFromNodes(
   return nodes.filter((node) => !scores.includes(node));
 }
 
-export function GetScoredNodes(nodes: number[]) {
+export function DeleteScoredValuesFromNodes(nodes: number[]) {
   const sortedNodes = sortNodes(nodes);
   const startValue = {
     nodes: sortedNodes,

@@ -3,7 +3,7 @@ import Grid from "./components/Grid/Grid";
 import { GenerateViruses } from "./hooks/generateViruses";
 import { SetContextParams, IContext } from "./types/types";
 import { virusAmount } from "./utils/constants";
-import { GetScoredNodes } from "./utils/find-sequential-numbers";
+import { DeleteScoredValuesFromNodes } from "./utils/find-sequential-numbers";
 
 // TODOLIST:
 // - add second half of pill -- done
@@ -12,7 +12,7 @@ import { GetScoredNodes } from "./utils/find-sequential-numbers";
 // - kill existing pills
 //      - horizontally - done
 //      - vertically - done
-// - kill virus
+// - kill virus -- progress
 // - colors
 // - game over
 // - buttons for game options
@@ -29,11 +29,6 @@ import { GetScoredNodes } from "./utils/find-sequential-numbers";
 //
 
 export const Context = createContext({} as IContext);
-
-// TODO refactor this (probably can move to find file)
-function scanForPossiblePoints(nodes: number[]): number[] {
-  return GetScoredNodes(nodes);
-}
 
 const App: FC = () => {
   const viruses = useMemo(() => GenerateViruses(virusAmount), []);
@@ -54,15 +49,15 @@ const App: FC = () => {
       const unsortedPills = pills || prev.pills;
       const unsortedViruses = viruses || prev.viruses;
 
-      // TODO rename this
-      const validPills = scanForPossiblePoints(unsortedPills);
-      // const validViruses = scanForPossiblePoints(unsortedViruses);
+      const validPills = DeleteScoredValuesFromNodes(unsortedPills);
+      // continue here -- viruses are not deleted on complete
+      // maybe these two can be combined
+      const validViruses = DeleteScoredValuesFromNodes(unsortedViruses);
 
       return {
         ...prev,
         pills: validPills,
-        // viruses: validViruses || [],
-        viruses: [],
+        viruses: validViruses,
       };
     });
   };
